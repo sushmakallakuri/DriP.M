@@ -197,7 +197,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
                 _showPrimaryButton(),
                 _showSecondaryButton(),
                 _showErrorMessage(),
-                _showImage(),
+//                _showImage(),
               ],)));
   }
 
@@ -243,17 +243,17 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
     }
   }
 
-  Widget _showImage()
-  {
-    return Container(
-      constraints: BoxConstraints.expand(height: 300),
-      alignment: Alignment.center,
-      child: Image.asset(
-        "assets/synergy.jpeg",
-        fit: BoxFit.cover,
-      ),
-    );
-  }
+//  Widget _showImage()
+//  {
+//    return Container(
+//      constraints: BoxConstraints.expand(height: 300),
+//      alignment: Alignment.center,
+//      child: Image.asset(
+//        "assets/synergy.jpeg",
+//        fit: BoxFit.cover,
+//      ),
+//    );
+//  }
 
 
   Widget _showLogo() {
@@ -369,7 +369,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
           ),
           new Text(
             'Doctor',
-            style: new TextStyle(fontSize: ScreenUtil.instance.setSp(16)),
+            style: new TextStyle(fontSize: 16),
           ),
           new Radio(
             value: 'Nurse',
@@ -379,7 +379,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
           new Text(
             'Nurse',
             style: new TextStyle(
-              fontSize: ScreenUtil.instance.setSp(16),
+              fontSize: 16,
             ),
 
           ),
@@ -392,7 +392,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
           new Text(
             'Attender',
             style: new TextStyle(
-              fontSize: ScreenUtil.instance.setSp(16),
+              fontSize: 16,
             ),
 
           ),
