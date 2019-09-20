@@ -15,7 +15,7 @@ The main objective of this project is stop the reverse flow of blood through IV 
     -> After setting up turn on the power supply.You will see the interface screen on the device
     -> If the device displays a message "Wifi Connected" then the device is read to use
     -> If not connect to a network named "esp32ap" using default password "12345678".
-    -> Then you will be redirected to a webpage where u should click on hamburger icon and select "config new access point" option.
+    -> Then you will be redirected to a webpage where u should click on hamburger icon on right hand top corner and select "config new access point" option.
     -> Then select the wifi network you wanted to connect and enter the credintials.
     -> Once the crediantials are validated  and device is connected to network you will see message "Wifi connected " on display.
     
