@@ -8,7 +8,7 @@
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
-//#include <Preferences.h>
+#include <Preferences.h>
 
 #define FIREBASE_HOST "mydrip-1b87b.firebaseio.com"
 #define FIREBASE_AUTH "pKrCyAzqhnzcck1IRWRthC8qDdILTHhllP4JPMPG"
@@ -153,8 +153,10 @@ Metro voltime = Metro(5000);
 
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
-bool flowstate = true;
+bool flowstate=true;
+bool mobilestate;
 int pre = 0;
+bool preFlow;
 int pre1 = 0;
 int pre2 = 0;
 int count1 = 0;
@@ -330,7 +332,7 @@ void check_Button_state()
     EEPROM.write(0, (byte)1);
     EEPROM.commit();
     flowstate = true;
-    Firebase.setBool(firebaseData, "/patients/"+bedNo+"/state", flowstate);
+    //Firebase.setBool(firebaseData, "/patients/"+bedNo+"/state", flowstate);
     //pass('z',1);
   }
   /*
@@ -379,7 +381,7 @@ void check_Button_state()
         EEPROM.write(i, 0);
       }
     }
-    Firebase.setBool(firebaseData, "/patients/"+bedNo+"/state", flowstate);
+    //Firebase.setBool(firebaseData, "/patients/"+bedNo+"/state", flowstate);
   }
   /*
      If Reset Button is not pressed
@@ -483,15 +485,16 @@ void check_start_state()
     if ((vol > totvol) || (latest == 0))
     {
       //servo.write(60 + count - prevc);
-      flowstate = false;
+      //flowstate = false;
       digitalWrite(buzz, HIGH);
       delay(100);
 
     }
+    if(mobilestate==true){
     if (digitalRead(IR) == HIGH)
     {
       digitalWrite(buzz, LOW);
-      //servo.write(60);
+     // servo.write(60);
       flowstate = true;
     }
     else
@@ -499,6 +502,7 @@ void check_start_state()
       digitalWrite(buzz, HIGH);
       //servo.write(0);
       flowstate = false;
+    }
     }
   }
 }
@@ -551,16 +555,35 @@ void Task2code( void * pvParameters ) {
     //display.println("SHAW");
   }
   int b = 0;
+   Portal.handleClient();
   while (true) {
-    Portal.handleClient();
-    delay(5000);
+   
+    delay(500);
     if(starts == 1){
-      Firebase.setString(firebaseData, "/patients/"+bedNo+"/Vol", (String)(totvol - vol));
-      Firebase.setString(firebaseData, "/patients/"+bedNo+"/percent", (String)totvol);
-      Firebase.setString(firebaseData, "/patients/"+bedNo+"/estime", (String)time1);
-      Firebase.setString(firebaseData, "/patients/"+bedNo+"/flow", (String)amount);
+      Serial.println("############################################");
+       Firebase.setBool(firebaseData, "/patients/"+bedNo+"/state", flowstate);
+      Firebase.setString(firebaseData, "/patients/"+bedNo+"/Vol",String(vol));
+      Serial.print(totvol - vol);
+      Firebase.setString(firebaseData, "/patients/"+bedNo+"/percent",String(totvol)) ;
+      Serial.print(totvol);
+      Firebase.setString(firebaseData, "/patients/"+bedNo+"/estime",String(time1 ));
+      Serial.print(time1);
+      Firebase.setString(firebaseData, "/patients/"+bedNo+"/flow",String(amount ));
+      Serial.print(amount);
       if(Firebase.getBool(firebaseData, "/patients/"+bedNo+"/state")){
+        preFlow = flowstate;
         flowstate = firebaseData.boolData();
+        
+          if(flowstate==false)
+          {
+            mobilestate=false;
+            }
+            else{
+              mobilestate=true;
+              
+              }
+          
+        
       }
       if(Firebase.getString(firebaseData, "/patients/"+bedNo+"/speed")){
         setvalue1 = (firebaseData.stringData()).toInt();
@@ -568,6 +591,7 @@ void Task2code( void * pvParameters ) {
       Serial.println(flowstate);
       Serial.println(setvalue1);
     }
+    
   }
 }
 
@@ -605,11 +629,11 @@ void loop() {
     prevc = count;
   }
   if(flowstate == false){
-    servo.write(60 + count - prevc);
-    Firebase.setBool(firebaseData, "/patients/"+bedNo+"/state", flowstate);
+    servo.write(175 + count - prevc);
+    //Firebase.setBool(firebaseData, "/patients/"+bedNo+"/state", flowstate);
   }
   else{
-    Firebase.setBool(firebaseData, "/patients/"+bedNo+"/state", flowstate);
+    //Firebase.setBool(firebaseData, "/patients/"+bedNo+"/state", flowstate);
     flowcon = 0;
     servo.write(0);
   }
