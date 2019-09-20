@@ -596,7 +596,7 @@ class _HomePageState extends State<HomePage> {
     )..init(context);
     return new Scaffold(
         appBar: new AppBar(
-          title: new Text("IV ACTUATOR"),
+          title: new Text("DriP.M"),
           actions: <Widget>[
             new FlatButton(
                 child: new Text('Logout',
