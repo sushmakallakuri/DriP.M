@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app_mydripo/services/authentication.dart';
-import 'package:flutter_app_mydripo/services/authentication.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_app_mydripo/models/users.dart';
-import 'package:flutter_app_mydripo/models/patients.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+enum WidgetMarker { loginpage, signuppage }
 
-enum WidgetMarker { loginpage,signuppage }
 class LoginSignUpPage extends StatefulWidget {
   LoginSignUpPage({this.auth, this.onSignedIn});
 
@@ -28,12 +25,9 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
   String _role;
   String _name;
 
-  String _rolestate;
+  //String _rolestate;
   final FirebaseDatabase _database = FirebaseDatabase.instance;
-  WidgetMarker
-  selectedWidgetMarker = WidgetMarker.loginpage;
-
-
+  WidgetMarker selectedWidgetMarker = WidgetMarker.loginpage;
 
   // Initial form is login form
   FormMode _formMode = FormMode.LOGIN;
@@ -60,15 +54,17 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
       String userId = "";
       try {
         if (_formMode == FormMode.LOGIN) {
-          userId = await widget.auth.signIn(_email, _password,);
+          userId = await widget.auth.signIn(
+            _email,
+            _password,
+          );
 
           print('Signed in: $userId');
-
         } else {
           userId = await widget.auth.signUp(_email, _password);
           widget.auth.sendEmailVerification();
           _showVerifyEmailSentDialog();
-          users user = new users(_name.toString(), userId, _role);
+          Users user = new Users(_name.toString(), userId, _role);
           _database.reference().child("users").push().set(user.toJson());
 
           print('Signed up user: $userId');
@@ -77,10 +73,11 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
           _isLoading = false;
         });
 
-        if (userId != null && userId.length > 0 && _formMode == FormMode.LOGIN) {
+        if (userId != null &&
+            userId.length > 0 &&
+            _formMode == FormMode.LOGIN) {
           widget.onSignedIn();
         }
-
       } catch (e) {
         print('Error: $e');
         setState(() {
@@ -93,7 +90,6 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
       }
     }
   }
-
 
   @override
   void initState() {
@@ -124,22 +120,32 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
   Widget build(BuildContext context) {
     _isIos = Theme.of(context).platform == TargetPlatform.iOS;
     return new Scaffold(
-        appBar: new AppBar(
-          title: new Text('Smart Infusion System'),
+      appBar: new AppBar(
+        title: new Text('Drip.M'),
+      ),
+      body: Container(
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
+        child: Center(
+          child: Stack(
+            children: <Widget>[
+              _showBody(),
+              _showCircularProgress(),
+            ],
+          ),
         ),
-        body: Stack(
-          children: <Widget>[
-            _showBody(),
-            _showCircularProgress(),
-          ],
-        ));
+      ),
+    );
   }
 
-  Widget _showCircularProgress(){
+  Widget _showCircularProgress() {
     if (_isLoading) {
       return Center(child: CircularProgressIndicator());
-    } return Container(height: 0.0, width: 0.0,);
-
+    }
+    return Container(
+      height: 0.0,
+      width: 0.0,
+    );
   }
 
   void _showVerifyEmailSentDialog() {
@@ -149,7 +155,8 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
         // return object of type Dialog
         return AlertDialog(
           title: new Text("Verify your account"),
-          content: new Text("Link to verify account has been sent to your email"),
+          content:
+              new Text("Link to verify account has been sent to your email"),
           actions: <Widget>[
             new FlatButton(
               child: new Text("Dismiss"),
@@ -164,45 +171,45 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
     );
   }
 
-
-
-  Widget _showBody(){
-
-    return ListView(
-      children: <Widget>[
-        Row(
-
-        ),
-
-        Container(
-          child: getCustomContainer(),
-        )
-      ],
+  Widget _showBody() {
+    return Center(
+      child: ListView(
+        children: <Widget>[
+          SizedBox(
+            height: MediaQuery.of(context).size.height*0.15,
+          ),
+          Container(
+            child: getCustomContainer(),
+          )
+        ],
+      ),
     );
   }
 
-
-  Widget getloginpage()
-  {
-    return new Container(
-        padding: EdgeInsets.all(16.0),
-        child: new Form(
-            key: _formKey,
-            child: new ListView(
-              shrinkWrap: true,
-              children: <Widget>[
-                _showLogo(),
-                _showEmailInput(),
-                _showPasswordInput(),
-                _showPrimaryButton(),
-                _showSecondaryButton(),
-                _showErrorMessage(),
+  Widget getloginpage() {
+    return Center(
+      child: new Container(
+          padding: EdgeInsets.all(16.0),
+          child: new Form(
+              key: _formKey,
+              child: Center(
+                child: new ListView(
+                  shrinkWrap: true,
+                  children: <Widget>[
+                    _showLogo(),
+                    _showEmailInput(),
+                    _showPasswordInput(),
+                    _showPrimaryButton(),
+                    _showSecondaryButton(),
+                    _showErrorMessage(),
 //                _showImage(),
-              ],)));
+                  ],
+                ),
+              ))),
+    );
   }
 
-  Widget getsignuppage()
-  {
+  Widget getsignuppage() {
     return new Container(
         padding: EdgeInsets.all(10.0),
         child: new Form(
@@ -213,18 +220,15 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
                 _showLogo(),
                 _showname(),
                 _showEmailInput(),
-                _showPasswordInput(),// add name and role
+                _showPasswordInput(), // add name and role
                 //ROLE
                 _showRole(),
                 _showPrimaryButton(),
                 _showSecondaryButton(),
                 _showErrorMessage(),
-              ],)));
+              ],
+            )));
   }
-
-
-
-
 
   Widget _showErrorMessage() {
     if (_errorMessage != null && _errorMessage.length > 0) {
@@ -255,11 +259,10 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
 //    );
 //  }
 
-
   Widget _showLogo() {
     return new Hero(
       tag: 'hero',
-      child: Image.asset('assets/logo.jpg',width: 10,height: 100),
+      child: Image.asset('assets/logo.jpg', width: 10, height: 100),
       //FlutterLogo(size: 100.0),
     );
   }
@@ -274,7 +277,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
         decoration: new InputDecoration(
             hintText: 'Name',
             icon: new Icon(
-              Icons.account_circle ,
+              Icons.account_circle,
               color: Colors.grey,
             )),
         validator: (value) {
@@ -284,15 +287,12 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
             });
             return 'name can\'t be empty';
           }
+          return null;
         },
         onSaved: (value) => _name = value,
       ),
     );
   }
-
-
-
-
 
   Widget _showEmailInput() {
     return Padding(
@@ -314,6 +314,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
             });
             return 'Email can\'t be empty';
           }
+          return null;
         },
         onSaved: (value) => _email = value,
       ),
@@ -340,28 +341,23 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
             });
             return 'Email can\'t be empty';
           }
+          return null;
         },
         onSaved: (value) => _password = value,
       ),
     );
   }
+
   Widget _showRole() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 0.0),
-      child:
-
-      new Row(
-
+      child: new Row(
         children: <Widget>[
           Icon(
-
             Icons.group,
-
             color: Colors.grey,
             size: 30.0,
-
           ),
-
           new Radio(
             value: 'Doctor',
             groupValue: _role,
@@ -373,7 +369,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
           ),
           new Radio(
             value: 'Nurse',
-            groupValue:  _role,
+            groupValue: _role,
             onChanged: _handleRadioValueChange1,
           ),
           new Text(
@@ -381,30 +377,26 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
             style: new TextStyle(
               fontSize: 16,
             ),
-
           ),
           new Radio(
             value: 'Attender',
-            groupValue:  _role,
+            groupValue: _role,
             onChanged: _handleRadioValueChange1,
           ),
-
           new Text(
             'Attender',
             style: new TextStyle(
               fontSize: 16,
             ),
-
           ),
         ],
       ),
     );
   }
 
-  void _handleRadioValueChange1( String value) {
+  void _handleRadioValueChange1(String value) {
     setState(() {
       _role = value;
-
     });
   }
   /*
@@ -415,39 +407,23 @@ void change_state(bool state){
 
 }*/
 
-
-
-
-
-
   Widget getCustomContainer() {
-    switch
-    (selectedWidgetMarker) {
-      case
-      WidgetMarker.loginpage:
-        return
-          getloginpage();
-      case
-      WidgetMarker.signuppage:
-        return
-          getsignuppage();
-
+    switch (selectedWidgetMarker) {
+      case WidgetMarker.loginpage:
+        return getloginpage();
+      case WidgetMarker.signuppage:
+        return getsignuppage();
     }
-
-
+    return null;
   }
 
-
   Widget _showSecondaryButton() {
-
-
     return new FlatButton(
       child: _formMode == FormMode.LOGIN
-          ? new Text('Create an account',
-          style: new TextStyle(fontSize: 18, fontWeight: FontWeight.w300))
+          ? new Text('Create an account ?',
+              style: new TextStyle(fontSize: 14,decoration: TextDecoration.underline, fontWeight: FontWeight.w300))
           : new Text('Have an account? Sign in',
-          style:
-          new TextStyle(fontSize: 18, fontWeight: FontWeight.w300)),
+              style: new TextStyle(fontSize: 14,decoration: TextDecoration.underline, fontWeight: FontWeight.w300)),
       onPressed: _formMode == FormMode.LOGIN
           ? _changeFormToSignUp
           : _changeFormToLogin,
@@ -455,12 +431,12 @@ void change_state(bool state){
   }
 
   Widget _showPrimaryButton() {
-    if(_formMode == FormMode.LOGIN){
+    if (_formMode == FormMode.LOGIN) {
       setState(() {
         selectedWidgetMarker = WidgetMarker.loginpage;
       });
     }
-    if(_formMode == FormMode.SIGNUP){
+    if (_formMode == FormMode.SIGNUP) {
       setState(() {
         selectedWidgetMarker = WidgetMarker.signuppage;
       });
@@ -469,22 +445,19 @@ void change_state(bool state){
     return new Padding(
         padding: EdgeInsets.fromLTRB(0.0, 45.0, 0.0, 0.0),
         child: SizedBox(
-          height: 40.0,
+          height: 50.0,
           child: new RaisedButton(
             elevation: 5.0,
-            shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
+            shape: new RoundedRectangleBorder(
+                borderRadius: new BorderRadius.circular(30.0)),
             color: Colors.blue,
             child: _formMode == FormMode.LOGIN
-                ?
-            new Text('Login',
-                style: new TextStyle(fontSize: 20, color: Colors.white))
-
-                :  new Text('Create account',
-                style: new TextStyle(fontSize: 20, color: Colors.white)),
+                ? new Text('Login',
+                    style: new TextStyle(fontSize: 20, color: Colors.white))
+                : new Text('Create account',
+                    style: new TextStyle(fontSize: 20, color: Colors.white)),
             onPressed: _validateAndSubmit,
-
           ),
         ));
   }
-
 }

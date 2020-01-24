@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app_mydripo/pages/login_signup_page.dart';
 import 'package:flutter_app_mydripo/services/authentication.dart';
 import 'package:flutter_app_mydripo/pages/home_page.dart';
-import 'package:firebase_database/firebase_database.dart';
-
-
 
 class RootPage extends StatefulWidget {
   RootPage({this.auth});
@@ -34,20 +31,19 @@ class _RootPageState extends State<RootPage> {
           _userId = user?.uid;
         }
         authStatus =
-        user?.uid == null ? AuthStatus.NOT_LOGGED_IN : AuthStatus.LOGGED_IN;
+            user?.uid == null ? AuthStatus.NOT_LOGGED_IN : AuthStatus.LOGGED_IN;
       });
     });
   }
 
   void _onLoggedIn() {
-    widget.auth.getCurrentUser().then((user){
+    widget.auth.getCurrentUser().then((user) {
       setState(() {
         _userId = user.uid.toString();
       });
     });
     setState(() {
       authStatus = AuthStatus.LOGGED_IN;
-
     });
   }
 
@@ -86,7 +82,8 @@ class _RootPageState extends State<RootPage> {
             auth: widget.auth,
             onSignedOut: _onSignedOut,
           );
-        } else return _buildWaitingScreen();
+        } else
+          return _buildWaitingScreen();
         break;
       default:
         return _buildWaitingScreen();

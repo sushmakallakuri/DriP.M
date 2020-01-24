@@ -1,31 +1,31 @@
 import 'package:firebase_database/firebase_database.dart';
 
-class patients {
+class Patients {
   String key;
   String age;
   String name;
   String roomno;
   String gender;
   String details;
-  int dripcount;
+  //int dripcount;
   bool trackstate = false;
   String percent = '0';
-  String Speed =  '0';
-  String Volume= '0';
-  String Volumepre= '0';
+  String speed =  '0';
+  String volume= '0';
+  String volumepre= '0';
   String estTime= '0';
   String prev = '0';
-  int alert = 0;
-  String barcode;
+  String alert = '0';
+  //String barcode;
   String flow = '0';
 
 
-  patients(this.barcode,this.roomno,this.name, this.age, this.gender,this.details);
+  Patients(/*this.barcode,*/this.roomno,this.name, this.age, this.gender,this.details);
 
-  patients.fromSnapshot(DataSnapshot snapshot) :
+  Patients.fromSnapshot(DataSnapshot snapshot) :
 
         key = snapshot.key,
-        barcode = snapshot.value["barcode"],
+        //barcode = snapshot.value["barcode"],
         roomno = snapshot.value["roomno"],
         name = snapshot.value["name"],
         age = snapshot.value["age"],
@@ -33,8 +33,8 @@ class patients {
         details = snapshot.value["details"],
         percent = snapshot.value["percent"],
         trackstate = snapshot.value['state'],
-        Speed = snapshot.value['speed'],
-        Volume = snapshot.value['Vol'],
+        speed = snapshot.value['speed'],
+        volume = snapshot.value['Vol'],
         alert=snapshot.value['alert'],
         flow = snapshot.value['flow'],
         estTime = snapshot.value['estime'];
@@ -51,11 +51,11 @@ class patients {
       "details": details,
       "percent" : percent,
       "state" : false,
-      "speed":Speed,
-      "Vol" : Volume,
+      "speed":speed,
+      "Vol" : volume,
       "estime": estTime,
       "alert":alert,
-      "barcode":barcode,
+      //"barcode":barcode,
       "flow":flow,
 
 
